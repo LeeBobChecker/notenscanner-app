@@ -1,0 +1,26 @@
+{
+  "name": "noten-scanner-app",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Übedateien für Chorstimmen aus der MusicXML-Datei von Audiveris, komplett im Browser",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fflate": "0.8.3",
+    "spessasynth_core": "4.3.22",
+    "wasm-media-encoders": "0.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.4",
+    "@xmldom/xmldom": "0.9.12",
+    "typescript": "5.9.3",
+    "vite": "7.3.7",
+    "vitest": "4.1.12"
+  }
+}
