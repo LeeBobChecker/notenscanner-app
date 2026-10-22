@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Übedateien für Chorstimmen aus der MusicXML-Datei von Audiveris, direkt im Browser." />
+    <title>Chor-Übedateien</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%B6%3C/text%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <header class="top">
+      <h1>Chor-Übedateien</h1>
+      <p>Aus der Notendatei von Audiveris werden Übedateien für jede Stimme. Alles läuft auf diesem Gerät, deine Noten verlassen es nicht.</p>
+    </header>
+
+    <main>
+      <section class="card" id="step-file" aria-labelledby="h-file">
+        <h2 id="h-file"><span class="num">1</span> Noten öffnen</h2>
+        <label class="drop" id="drop">
+          <input type="file" id="file" />
+          <span class="drop-main">Datei wählen</span>
+          <span class="drop-sub">oder hierher ziehen · MusicXML aus Audiveris (.mxl)</span>
+        </label>
+        <details class="help">
+          <summary>Woher kommt die Datei?</summary>
+          <ol>
+            <li>Noten mit 300 bis 400 dpi als PDF scannen.</li>
+            <li>In Audiveris öffnen (<em>File › Input</em>) und <em>Book › Transcribe book</em> wählen.</li>
+            <li><em>Book › Export book</em> wählen. Neben dem PDF liegt dann eine Datei mit der Endung <strong>.mxl</strong>; die hier öffnen.</li>
+          </ol>
+        </details>
+        <p class="message error" id="file-error" role="alert" hidden></p>
+      </section>
+
+      <section class="card" id="step-check" aria-labelledby="h-check" hidden>
+        <h2 id="h-check"><span class="num">2</span> Das hat die App erkannt</h2>
+        <label class="field">
+          <span>Titel</span>
+          <input type="text" id="title" autocomplete="off" />
+        </label>
+        <dl class="facts">
+          <div><dt>Besetzung</dt><dd id="fact-layout"></dd></div>
+          <div><dt>Stimmen</dt><dd id="fact-voices"></dd></div>
+          <div><dt>Umfang</dt><dd id="fact-size"></dd></div>
+        </dl>
+        <div id="flags"></div>
+      </section>
+
+      <section class="card" id="step-make" aria-labelledby="h-make" hidden>
+        <h2 id="h-make"><span class="num">3</span> Übedateien</h2>
+        <fieldset class="choices">
+          <legend>Wofür?</legend>
+          <label class="choice">
+            <input type="radio" name="role" value="singer" checked />
+            <span><strong>Meine Stimme üben</strong><small>Solo und Übe-Mix für eine Stimme</small></span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="role" value="conductor" />
+            <span><strong>Für den Chor (Dirigent)</strong><small>Übe-Mix für jede Stimme und eine Gesamtfassung</small></span>
+          </label>
+        </fieldset>
+
+        <label class="field" id="voice-field">
+          <span>Meine Stimme</span>
+          <select id="voice"></select>
+        </label>
+
+        <label class="field">
+          <span>Tempo</span>
+          <span class="inline"><input type="number" id="tempo" min="20" max="240" step="1" inputmode="numeric" /> Viertel pro Minute</span>
+        </label>
+
+        <fieldset class="checks">
+          <legend>Übetempi</legend>
+          <label><input type="checkbox" name="percent" value="100" checked /> 100 %</label>
+          <label><input type="checkbox" name="percent" value="85" checked /> 85 %</label>
+          <label><input type="checkbox" name="percent" value="70" /> 70 %</label>
+        </fieldset>
+
+        <details class="more">
+          <summary>Weitere Einstellungen</summary>
+          <fieldset class="checks">
+            <legend>Fassungen</legend>
+            <label><input type="checkbox" name="variant" value="solo" /> Solo <small>(nur die Stimme)</small></label>
+            <label><input type="checkbox" name="variant" value="mix" /> Übe-Mix <small>(Stimme laut, die anderen leise)</small></label>
+            <label><input type="checkbox" name="variant" value="gesamt" /> Gesamtfassung <small>(alle gleich laut)</small></label>
+          </fieldset>
+          <label class="field">
+            <span>Durchläufe</span>
+            <span class="inline"><input type="number" id="passes" min="1" max="12" step="1" value="1" inputmode="numeric" /> mal das ganze Stück, z. B. für alle Strophen</span>
+          </label>
+          <label class="check-line"><input type="checkbox" id="with-midi" /> MIDI-Dateien dazulegen (für GarageBand und Notenprogramme)</label>
+        </details>
+
+        <p class="plan" id="plan" aria-live="polite"></p>
+        <button type="button" class="primary" id="make">Übedateien erzeugen</button>
+        <div class="progress" id="progress" hidden>
+          <progress id="progress-bar" max="1" value="0"></progress>
+          <p id="progress-text" aria-live="polite"></p>
+        </div>
+        <p class="message error" id="make-error" role="alert" hidden></p>
+      </section>
+
+      <section class="card" id="step-done" aria-labelledby="h-done" hidden>
+        <h2 id="h-done"><span class="num">4</span> Fertig</h2>
+        <div class="actions">
+          <button type="button" class="primary" id="zip">Alle als ZIP laden</button>
+          <button type="button" id="share" hidden>Teilen oder in Dateien sichern</button>
+        </div>
+        <p class="hint">Auf iPhone und iPad landet die ZIP-Datei in der Dateien-App. Antippen packt sie aus.</p>
+        <ul class="results" id="results"></ul>
+      </section>
+    </main>
+
+    <footer class="bottom">
+      <p>Version <span id="version"></span> · Klang: FluidR3 (MIT), MP3: LAME (LGPL) · <a href="./lizenzen.txt">Lizenzen</a></p>
+    </footer>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
